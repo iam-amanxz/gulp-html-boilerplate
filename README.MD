@@ -6,6 +6,7 @@
 
 ## Run the project
 
+- `npm install`
 - `npm run dev` or `gulp` (if you have Gulp CLI installed)
 
 ## Features
