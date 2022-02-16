@@ -1,9 +1,11 @@
 {
-  "name": "applova-microsite",
+  "name": "gulp-boilerplate",
   "version": "0.0.1",
-  "description": "",
+  "description": "Boilerplate project using gulp",
   "main": "gulpfile.js",
-  "scripts": {},
+  "scripts": {
+    "dev": "gulp"
+  },
   "devDependencies": {
     "autoprefixer": "^10.4.2",
     "browser-sync": "^2.27.7",
