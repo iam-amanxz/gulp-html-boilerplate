@@ -1,11 +1,14 @@
 doctype html
-html
+html(⚡="" lang="en")
+
   head
-    meta(name="viewport" content="width=device-width,initial-scale=1")
-    link(rel="stylesheet" href="css/main.min.css")
-    title Acme Cleaning Services
-    script(src="js/scripts.min.js" defer)
+    block head
+      include ../includes/head
+    block head_specific
+  
   body
+    amp-analytics(config="https://www.googletagmanager.com/amp.json?id=GTM-T4FG4NR&gtm.url=SOURCE_URL" data-credentials="include")
+
     block nav
       include ../includes/nav
 
@@ -15,6 +18,3 @@ html
 
     block footer
       include ../includes/footer
-
-    script(type="text/javascript").
-      console.log('hello world');

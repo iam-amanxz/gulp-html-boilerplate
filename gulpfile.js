@@ -1,37 +1,34 @@
+const fs = require('fs')
 const { src, dest, watch, series } = require('gulp')
 const del = require('del')
-const concat = require('gulp-concat')
+const inject = require('gulp-inject-string')
 const rename = require('gulp-rename')
 const browsersync = require('browser-sync').create()
 const pug = require('gulp-pug')
 const sass = require('gulp-sass')(require('sass'))
-const terser = require('gulp-terser')
 const postcss = require('gulp-postcss')
 const cssnano = require('cssnano')
 const imagemin = require('gulp-imagemin')
 const autoprefixer = require('gulp-autoprefixer')
 const svgmin = require('gulp-svgmin')
 const webp = require('gulp-webp')
-const versionNumber = require('gulp-version-number')
+const ampOptimizer = require('@ampproject/toolbox-optimizer').create()
+const globby = require('globby')
+const replace = require('gulp-string-replace')
 
 const settings = {
   clean: true,
-  version: false,
-}
-
-const versionConfig = {
-  value: '%MDS%',
-  append: {
-    key: 'v',
-    to: ['css', 'js'],
-  },
 }
 
 const paths = {
   input: 'src',
   output: 'dist',
   html: {
-    input: 'src/*.pug',
+    input: [
+      'src/**/*.pug',
+      '!src/templates/**/*.pug',
+      '!src/includes/**/*.pug',
+    ],
     output: 'dist',
   },
   images: {
@@ -46,14 +43,10 @@ const paths = {
     input: 'src/scss/*.scss',
     output: 'dist/css',
   },
-  js: {
-    input: 'src/js/*.js',
-    output: 'dist/js',
-  },
 }
 
 // create dist folder
-const create = series(html, svg, images, css, js, reload)
+const create = series(html, svg, images, css, injectCss, reload)
 
 // clean dist folder
 const clean = function (done) {
@@ -63,13 +56,42 @@ const clean = function (done) {
   return done()
 }
 
-// compile pug files into html files and version css and js
+// compile pug files into html files
 function html() {
   return src(paths.html.input)
     .pipe(pug())
-    .pipe(versionNumber(versionConfig))
     .pipe(rename({ extname: '.html' }))
+    .pipe(dest('dist'))
+}
+
+// inject css inside amp-custom tag
+function injectCss() {
+  const css = fs.readFileSync(paths.css.output + '/main.min.css', 'utf8')
+  //todo: find a way to inject only required css in each page
+  return src('dist/**/*.html')
+    .pipe(
+      replace(
+        /(<style amp-custom>)([\s\S]*)(<\/style>)/g,
+        '<style amp-custom></style>',
+      ),
+    )
+    .pipe(inject.after('<style amp-custom>', css))
     .pipe(dest(paths.html.output))
+}
+
+// optimize amp html files
+function optimizeAmp(done) {
+  globby(['dist/**/*.html'])
+    .then((files) => {
+      files.forEach((file) => {
+        const html = fs.readFileSync(file, 'utf8')
+        const filePath = file.replace(/\\/g, '/')
+        ampOptimizer.transformHtml(html).then((result) => {
+          fs.writeFileSync(filePath, result)
+        })
+      })
+    })
+    .finally(done)
 }
 
 // minify svg files
@@ -95,15 +117,6 @@ function css() {
     .pipe(dest(paths.css.output, { sourcemaps: '.' }))
 }
 
-// minify js files
-function js() {
-  return src(paths.js.input, { sourcemaps: true })
-    .pipe(terser().on('error', (error) => console.log(error)))
-    .pipe(concat('scripts.js'))
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(dest(paths.js.output, { sourcemaps: '.' }))
-}
-
 // serve the dist folder
 function serve(cb) {
   browsersync.init({
@@ -121,11 +134,12 @@ function reload(cb) {
 }
 
 function watcher() {
-  watch(paths.html.input, series(html, reload))
+  watch(paths.html.input, series(html, injectCss, reload))
   watch(paths.svg.input, series(svg, reload))
   watch(paths.images.input, series(images, reload))
-  watch(paths.css.input, series(css, reload))
-  watch(paths.js.input, series(js, reload))
+  watch(paths.css.input, series(css, injectCss, reload))
 }
 
 exports.default = series(clean, serve, watcher)
+
+exports.optimize = optimizeAmp

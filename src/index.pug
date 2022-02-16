@@ -1,24 +1,29 @@
 extends templates/layout
 
+block head_specific
+  title Index page
+  meta(name="description", content="This is the description of the index page")
+  link(rel="canonical" href="index.html")
+
 block main
   main
-    h2 Our Services
-      .sections-grid
-        section.section.section1
-          h3
-            a(href="#") Hospitals
-        section.section.section2
-          h3
-            a(href="#") Hotelss
-        section.section.section3
-          h3
-            a(href="#") House Cleaning
-        section.section.section4
-          h3
-            a(href="#") End of Tenancy
-        section.section.section5
-          h3
-            a(href="#") Oven Cleaning
-        section.section.section6
-          h3
-            a(href="#") Covid Disinfection
+    This is the index page
+
+    a(href="about.html") About page
+
+    amp-img(
+      alt="alt text"  
+      width="500"
+      height="500"
+      layout="fixed"
+      src="https://images.pexels.com/photos/1987301/pexels-photo-1987301.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+      )
+      amp-img(
+      fallback
+      alt="alt text"  
+      width="500"
+      height="500"
+      layout="fixed"
+      src="https://images.pexels.com/photos/1987301/pexels-photo-1987301.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+      )
+

@@ -4,25 +4,27 @@
   "description": "Boilerplate project using gulp",
   "main": "gulpfile.js",
   "scripts": {
-    "dev": "gulp"
+    "dev": "gulp",
+    "optimize": "gulp optimize"
   },
   "devDependencies": {
+    "@ampproject/toolbox-optimizer": "^2.8.8",
     "autoprefixer": "^10.4.2",
     "browser-sync": "^2.27.7",
     "cssnano": "^5.0.17",
     "del": "^6.0.0",
+    "globby": "^11.0.4",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^8.0.0",
     "gulp-cli": "^2.3.0",
-    "gulp-concat": "^2.6.1",
     "gulp-imagemin": "^7.0.1",
+    "gulp-inject-string": "^1.1.2",
     "gulp-postcss": "^9.0.1",
     "gulp-pug": "^5.0.0",
     "gulp-rename": "^2.0.0",
     "gulp-sass": "^5.1.0",
+    "gulp-string-replace": "^1.1.2",
     "gulp-svgmin": "^4.1.0",
-    "gulp-terser": "^2.1.0",
-    "gulp-version-number": "^0.2.4",
     "gulp-webp": "^4.0.1",
     "postcss": "^8.4.6",
     "sass": "^1.45.2"
