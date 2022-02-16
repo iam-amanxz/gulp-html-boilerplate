@@ -1,0 +1,20 @@
+doctype html
+html
+  head
+    meta(name="viewport" content="width=device-width,initial-scale=1")
+    link(rel="stylesheet" href="css/main.min.css")
+    title Acme Cleaning Services
+    script(src="js/scripts.min.js" defer)
+  body
+    block nav
+      include ../includes/nav
+
+    block main
+      main 
+        p This is the main part of the page
+
+    block footer
+      include ../includes/footer
+
+    script(type="text/javascript").
+      console.log('hello world');
